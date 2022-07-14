@@ -1,0 +1,66 @@
+{% extends  'layout/basic.html'%}
+{% load static %}
+{#继承basic模板#}
+{% block title %}用户注册{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/account.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="account">
+    <h1 style="text-align: center;">注册</h1>
+    <form>
+        {% for field in form %}
+            {% if field.name == 'code' %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    <div class="clearfix">
+                        <div class="col-md-6" style="padding-left: 0;">{{ field }}</div>
+                        <div class="col-md-6">
+                            <input id='btnSms' type="button" class="btn btn-default" value="点击获取验证码">
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+{#                    field 表示一个input 标签#}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">注 册</button>
+    </form>
+
+</div>
+{% endblock %}
+
+{% block js %}
+    <script>
+    //页面框架加载完成以后自动执行的函数
+    $(function () {
+        bindBtnSms();
+    });
+    // 点击获取验证吗按钮绑定事件
+    function bindBtnSms() {
+        $('#btnSms').click(function () {
+            //获取手机号
+            let mobile_phone = $('#id_mobile_phone').val();
+            // 发送ajax请求
+            $.ajax({
+                url:"{% url 'SMS' %}", //方法一写法
+                // 方法二写法  url:"send/sms/", //  send/sms/?moblie_phone=186567951              type:"GET",
+                data:{
+                    mobilePhone:mobile_phone,
+                    tpl:"register"
+                },
+                success:function (res) {
+                    // ajax请求发送成功后自动回调函数 res 就是后端返回给我们的值
+                    console.log(res);
+                }
+            })
+        });
+    }
+    </script>
+{% endblock %}
